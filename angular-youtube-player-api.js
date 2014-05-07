@@ -1,16 +1,7 @@
-angular.module('youtube', ['ng']).run(function () {
-    var tag = document.createElement('script');
-
-    // This is a protocol-relative URL as described here:
-    //     http://paulirish.com/2010/the-protocol-relative-url/
-    // If you're testing a local page accessed via a file:/// URL, please set tag.src to
-    //     "https://www.youtube.com/iframe_api" instead.
-    tag.src = "//www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-})
+angular.module('youtube', ['ng'])
 .service('$youtube', ['$window', '$rootScope', function ($window, $rootScope) {
     var service = {
+        scriptInjected: false,
         // Frame is ready
         ready: false,
 
@@ -26,6 +17,21 @@ angular.module('youtube', ['ng']).run(function () {
         // Size
         playerHeight: '390',
         playerWidth: '640',
+
+        injectScript: function(){
+            if(!$youtube.scriptInjected){
+                var tag = document.createElement('script');
+                // This is a protocol-relative URL as described here:
+                //     http://paulirish.com/2010/the-protocol-relative-url/
+                // If you're testing a local page accessed via a file:/// URL, please set tag.src to
+                //     "https://www.youtube.com/iframe_api" instead.
+                tag.src = "//www.youtube.com/iframe_api";
+                var firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+
+            $youtube.scriptInjected = true;
+        },
 
         createPlayer: function () {
             return new YT.Player(this.playerId, {
@@ -89,6 +95,8 @@ angular.module('youtube', ['ng']).run(function () {
     return service;
 }])
 .directive('youtubePlayer', ['$youtube', function ($youtube) {
+    //make sure script is injected
+    $youtube.injectScript();
     return {
         restrict: 'EA',
         scope: {
