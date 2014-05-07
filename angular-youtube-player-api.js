@@ -19,7 +19,7 @@ angular.module('youtube', ['ng'])
         playerWidth: '640',
 
         injectScript: function(){
-            if(!$youtube.scriptInjected){
+            if(!this.scriptInjected){
                 var tag = document.createElement('script');
                 // This is a protocol-relative URL as described here:
                 //     http://paulirish.com/2010/the-protocol-relative-url/
@@ -30,7 +30,7 @@ angular.module('youtube', ['ng'])
                 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
             }
 
-            $youtube.scriptInjected = true;
+            this.scriptInjected = true;
         },
 
         createPlayer: function () {
